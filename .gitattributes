@@ -2,3 +2,4 @@
 # Mark any vendored files as having been vendored.
 vendor/* linguist-vendored
 *.wav filter=lfs diff=lfs merge=lfs -text
+*.jpg filter=lfs diff=lfs merge=lfs -text
