@@ -1,0 +1,11 @@
+<br>
+<div class="row">
+  <div class="col-sm-12 col-md-12 col-lg-8 col-xl-7">
+		<div class="card", data-controller= "art" }>
+			<%= image_tag("mega_boccioni.jpg", class: "img-fluid", id: "art", data: { action: "mousemove->art#move" } ) %>
+		</div>
+	</div>
+	<div class="col-sm-12 col-md-12 col-lg-4 col-xl-5 center">
+		<%= render "values"%>
+	</div>
+</div>

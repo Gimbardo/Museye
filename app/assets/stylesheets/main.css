@@ -1,0 +1,7 @@
+.center {
+  display: grid;
+  
+  /*Vertical & Horizontal Align*/
+  align-items: center;
+  justify-items: center;
+ }
