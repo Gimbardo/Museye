@@ -32,29 +32,29 @@ function change_volume(new_volumes){
  * saturation-0.50 * 2
  * 
  * based on value, this function changes single tracks volume
- * 1%-17% -> 100 10 10 10
- * 18%-34% -> 100 15 20 15
- * 35%-50% -> 100 20 50 25
- * 51%-66% -> 95 25 85 70
- * 67%-83% -> 85 55 35 20
- * 84%-100% -> 40 100 10 10
+ * 1%-17% -> 100 10 5 5
+ * 18%-34% -> 100 25 15 10
+ * 35%-50% -> 100 65 50 25
+ * 51%-66% -> 95 95 85 80
+ * 67%-83% -> 75 100 25 15
+ * 84%-100% -> 30 100 5 5
  * 
  */
 function calculate_volume(hsv){
   var global_volume = (hsv[1]/2)+ 0.5
   var new_volumes = []
   if(hsv[2]<0.17){
-    new_volumes = [1, 0.1, 0.1, 0.1, 0.1].map((num) =>{return num*global_volume})
+    new_volumes = [1, 0.1, 0.05, 0.05, 0.05].map((num) =>{return num*global_volume})
   } else if(hsv[2]<0.34){
-    new_volumes = [1, 0.15, 0.2, 0.15, 0.15].map((num) =>{return num*global_volume})
+    new_volumes = [1, 0.25, 0.15, 0.1, 0.1].map((num) =>{return num*global_volume})
   } else if(hsv[2]<0.50){
-    new_volumes = [1, 0.2, 0.5, 0.25, 0.25].map((num) =>{return num*global_volume})
+    new_volumes = [1, 0.65, 0.5, 0.25, 0.25].map((num) =>{return num*global_volume})
   } else if(hsv[2]<0.66){
-    new_volumes = [0.95, 0.25, 0.85, 0.7, 0.7].map((num) =>{return num*global_volume})
+    new_volumes = [0.95, 0.95, 0.85, 0.8, 0.8].map((num) =>{return num*global_volume})
   } else if(hsv[2]<0.83){
-    new_volumes = [0.85, 0.55, 0.35, 0.2, 0.2].map((num) =>{return num*global_volume})
+    new_volumes = [0.75, 0.1, 0.25, 0.15, 0.15].map((num) =>{return num*global_volume})
   } else {
-    new_volumes = [0.4, 1, 0.1, 0.1, 0.1].map((num) =>{return num*global_volume})
+    new_volumes = [0.3, 1, 0.05, 0.05, 0.05].map((num) =>{return num*global_volume})
   }
   return new_volumes
 }
