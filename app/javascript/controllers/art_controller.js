@@ -1,21 +1,39 @@
 import { Controller } from "@hotwired/stimulus"
-import { Howl } from "howler"
+import { Howl, Howler } from "howler"
 
 var sounds = []
 var sounds_id = []
-const sound_paths = ['/sounds/0-3k.wav','/sounds/100-5k.wav','/sounds/200-1k.wav','/sounds/300-700.wav','/sounds/300-700_delay.wav']
+const sound_paths = ['/sounds/0-3k.webm','/sounds/100-5k.webm','/sounds/200-1k.webm','/sounds/300-700.webm','/sounds/300-700_delay.webm']
+var n_ready_sounds = 0
+var ready = false;
+
+const volumes_map = [ 
+  [ 1, 0.1, 0.05, 0.05, 0.05 ],
+  [ 1, 0.25, 0.15, 0.1, 0.1 ],
+  [ 1, 0.65, 0.5, 0.25, 0.25 ],
+  [ 0.95, 0.95, 0.85, 0.8, 0.8 ],
+  [ 0.75, 0.1, 0.25, 0.15, 0.15 ],
+  [ 0.3, 1, 0.05, 0.05, 0.05 ]
+]
 
 export default class extends Controller {
   connect() {
-    sounds_id = start_sounds()
+    start_sounds()
+  }
+  disconnect() {
+    Howler.stop()
   }
 
   move(event) {
-    var rgb = obtain_rgb(event)
-    var hsv = rgbToHsv(rgb[0], rgb[1], rgb[2])
-    change_text(rgb,hsv)
-    var volumes = calculate_volume(hsv)
-    change_volume(volumes)
+    if(ready){
+      var rgb = obtain_rgb(event)
+      var hsv = rgbToHsv(rgb[0], rgb[1], rgb[2])
+      change_text(rgb,hsv)
+      var volumes = calculate_volume(hsv)
+      change_volume(volumes)
+    } else{
+      console.log("sounds not ready")
+    }
   }
 }
 
@@ -32,29 +50,23 @@ function change_volume(new_volumes){
  * saturation-0.50 * 2
  * 
  * based on value, this function changes single tracks volume
- * 1%-17% -> 100 10 5 5
- * 18%-34% -> 100 25 15 10
- * 35%-50% -> 100 65 50 25
- * 51%-66% -> 95 95 85 80
- * 67%-83% -> 75 100 25 15
- * 84%-100% -> 30 100 5 5
- * 
+ * using volumes_map
  */
 function calculate_volume(hsv){
   var global_volume = (hsv[1]/2)+ 0.5
   var new_volumes = []
   if(hsv[2]<0.17){
-    new_volumes = [1, 0.1, 0.05, 0.05, 0.05].map((num) =>{return num*global_volume})
+    new_volumes = volumes_map[0].map((num) =>{return num*global_volume})
   } else if(hsv[2]<0.34){
-    new_volumes = [1, 0.25, 0.15, 0.1, 0.1].map((num) =>{return num*global_volume})
+    new_volumes = volumes_map[1].map((num) =>{return num*global_volume})
   } else if(hsv[2]<0.50){
-    new_volumes = [1, 0.65, 0.5, 0.25, 0.25].map((num) =>{return num*global_volume})
+    new_volumes = volumes_map[2].map((num) =>{return num*global_volume})
   } else if(hsv[2]<0.66){
-    new_volumes = [0.95, 0.95, 0.85, 0.8, 0.8].map((num) =>{return num*global_volume})
+    new_volumes = volumes_map[3].map((num) =>{return num*global_volume})
   } else if(hsv[2]<0.83){
-    new_volumes = [0.75, 0.1, 0.25, 0.15, 0.15].map((num) =>{return num*global_volume})
+    new_volumes = volumes_map[4].map((num) =>{return num*global_volume})
   } else {
-    new_volumes = [0.3, 1, 0.05, 0.05, 0.05].map((num) =>{return num*global_volume})
+    new_volumes = volumes_map[5].map((num) =>{return num*global_volume})
   }
   return new_volumes
 }
@@ -77,10 +89,16 @@ function start_sounds() {
     sounds[index] = new Howl({
       src: [path],
       loop: true,
-      volume: 0.2
+      volume: 0.2,
+      onload: function () {
+        n_ready_sounds ++
+        if (n_ready_sounds >= 5) {
+          sounds_id = sounds.map((sound) => { sound.play() })
+          ready = true;
+        }
+      }
     })
   })
-  return sounds.map((sound) => { sound.play() })
 }
 
 function change_text(rgb,hsv) {
