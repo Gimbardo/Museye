@@ -35,6 +35,11 @@ export default class extends Controller {
       console.log("sounds not ready")
     }
   }
+
+  exit(event) {
+    change_volume([0.2, 0.2, 0.2, 0.2, 0.2])
+    change_text([0,0,0],[0,0,0])
+  }
 }
 
 function change_volume(new_volumes){
